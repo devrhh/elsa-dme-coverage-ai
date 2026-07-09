@@ -1,0 +1,382 @@
+:root {
+  --bg: #f5f6f8;
+  --panel-bg: #ffffff;
+  --border: #e0e3e8;
+  --text: #1f2430;
+  --muted: #6b7280;
+  --primary: #2f6fed;
+  --primary-dark: #1f52b8;
+  --success: #1a9c5b;
+  --warning-bg: #fff4e0;
+  --warning-text: #a15c00;
+  --radius: 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Some elements below (e.g. .badge, .panel) set an explicit `display`,
+   which would otherwise override the browser's default `[hidden]` rule due
+   to CSS source order. This keeps `hidden` authoritative everywhere. */
+[hidden] {
+  display: none !important;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 32px;
+  background: var(--panel-bg);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.topbar-title h1 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.org-picker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.org-picker label {
+  font-weight: 600;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+select, textarea, input[type="file"] {
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+#org-select {
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--panel-bg);
+  min-width: 220px;
+}
+
+.app-main {
+  padding: 24px 32px 48px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 860px) {
+  .columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.panel h2 {
+  margin-top: 0;
+  font-size: 1.05rem;
+}
+
+.upload-form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: var(--radius);
+  padding: 9px 16px;
+  background: var(--primary);
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background 0.15s ease;
+}
+
+button:hover:not(:disabled) {
+  background: var(--primary-dark);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+button.secondary {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+}
+
+.status-line {
+  color: var(--muted);
+  font-size: 0.85rem;
+  min-height: 1.1em;
+}
+
+.status-line.error {
+  color: #c0392b;
+}
+
+.status-line.success {
+  color: var(--success);
+}
+
+.documents-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.document-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.document-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.document-filename {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.document-meta {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.doc-status {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.doc-status.ready {
+  background: #e3f7ec;
+  color: var(--success);
+}
+
+.doc-status.processing {
+  background: #e8eefd;
+  color: var(--primary-dark);
+}
+
+.doc-status.failed {
+  background: #fdeaea;
+  color: #c0392b;
+}
+
+.icon-button {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+}
+
+.icon-button:hover {
+  background: #fdeaea;
+  color: #c0392b;
+  border-color: #f1c3c3;
+}
+
+.query-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.query-form textarea {
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  resize: vertical;
+}
+
+.query-form button {
+  align-self: flex-end;
+}
+
+.answer-area {
+  margin-top: 18px;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+
+.answer-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: #e8eefd;
+  color: var(--primary-dark);
+}
+
+.badge-warning {
+  background: var(--warning-bg);
+  color: var(--warning-text);
+}
+
+.latency-note {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.answer-text {
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.citations {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 12px 0;
+}
+
+.citation-chip {
+  font-size: 0.82rem;
+  padding: 8px 10px;
+  background: #f8f9fb;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.citation-chip strong {
+  color: var(--text);
+}
+
+.feedback-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.feedback-button {
+  background: transparent;
+  border: 1px solid var(--border);
+  font-size: 1rem;
+  padding: 4px 10px;
+}
+
+.feedback-button.selected {
+  border-color: var(--primary);
+  background: #e8eefd;
+}
+
+.analytics-panel,
+#analytics-panel {
+  margin-top: 4px;
+}
+
+.analytics-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 12px;
+}
+
+@media (max-width: 1000px) {
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+th, td {
+  text-align: left;
+  padding: 6px 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.empty-state {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.empty-state.centered {
+  text-align: center;
+  margin-top: 80px;
+}

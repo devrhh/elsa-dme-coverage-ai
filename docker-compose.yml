@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: coverage_qa_postgres
+    environment:
+      POSTGRES_USER: coverage
+      POSTGRES_PASSWORD: coverage
+      POSTGRES_DB: coverage_qa
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U coverage -d coverage_qa"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:

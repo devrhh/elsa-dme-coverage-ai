@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coverage Q&amp;A Service</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-title">
+      <h1>Coverage Q&amp;A Service</h1>
+      <p class="subtitle">Ask grounded, citable questions about your coverage documents</p>
+    </div>
+    <div class="org-picker">
+      <label for="org-select">Organization</label>
+      <select id="org-select"></select>
+    </div>
+  </header>
+
+  <main id="app-main" class="app-main" hidden>
+    <div class="columns">
+      <section class="panel" id="documents-panel">
+        <h2>Documents</h2>
+
+        <form id="upload-form" class="upload-form">
+          <input type="file" id="file-input" accept="application/pdf" required />
+          <button type="submit" id="upload-button">Upload PDF</button>
+        </form>
+        <p id="upload-status" class="status-line"></p>
+
+        <div id="documents-list" class="documents-list">
+          <p class="empty-state">No documents yet - upload a coverage PDF to get started.</p>
+        </div>
+      </section>
+
+      <section class="panel" id="query-panel">
+        <h2>Ask a Question</h2>
+
+        <form id="query-form" class="query-form">
+          <textarea
+            id="question-input"
+            rows="3"
+            placeholder="Ask a question from uploaded documents"
+            required
+          ></textarea>
+          <button type="submit" id="ask-button">Ask</button>
+        </form>
+
+        <div id="answer-area" class="answer-area" hidden>
+          <div class="answer-header">
+            <span id="confidence-badge" class="badge"></span>
+            <span id="review-badge" class="badge badge-warning" hidden>Needs human review</span>
+            <span id="latency-note" class="latency-note"></span>
+          </div>
+          <p id="answer-text" class="answer-text"></p>
+
+          <div id="citations" class="citations"></div>
+
+          <div class="feedback-row">
+            <span>Was this helpful?</span>
+            <button type="button" id="feedback-up" class="feedback-button" title="Thumbs up">👍</button>
+            <button type="button" id="feedback-down" class="feedback-button" title="Thumbs down">👎</button>
+            <span id="feedback-status" class="status-line"></span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="panel" id="analytics-panel">
+      <div class="analytics-header">
+        <h2>Analytics</h2>
+        <button type="button" id="refresh-analytics">Refresh</button>
+      </div>
+
+      <div class="analytics-grid">
+        <div>
+          <h3>Most Queried Documents</h3>
+          <table id="top-documents-table">
+            <thead><tr><th>Document</th><th>Queries</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div>
+          <h3>Frequent Questions</h3>
+          <table id="top-questions-table">
+            <thead><tr><th>Question</th><th>Count</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div>
+          <h3>Weekly Document Usage</h3>
+          <table id="weekly-usage-table">
+            <thead><tr><th>Week</th><th>Document</th><th>Queries</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <p id="no-org-message" class="empty-state centered" hidden>
+    No organizations found. Run <code>python init_db.py</code> to seed sample organizations.
+  </p>
+
+  <script src="/app.js"></script>
+</body>
+</html>
