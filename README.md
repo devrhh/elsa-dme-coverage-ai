@@ -134,3 +134,60 @@ app/
 docker-compose.yml        Postgres service for local development
 init_db.py                Schema creation + sample organization seeding
 ```
+
+## Key design questions
+
+**Why FastAPI vs Flask?**
+Async-capable (room to move to true non-blocking I/O later), native Pydantic validation
+for both request/response contracts and LLM output schemas, auto-generated OpenAPI docs
+(`/docs`), and modern type-hint-based DX - Flask needs extra libraries (Marshmallow,
+Flask-RESTX) to match any of that out of the box.
+
+**RAG architecture**
+Upload -> validate PDF -> extract structure (`pdfplumber`) -> structure-aware chunk ->
+embed locally -> index into an org-scoped Chroma collection. Query -> embed question ->
+search only that org's collection -> confidence gate -> if confident, guarded prompt to
+Groq (JSON mode) -> validate + verify citations -> persist + return answer with
+citations, confidence, and a review flag.
+
+**Chunking strategy**
+Structure-aware, not fixed-size: headings are tracked as a path and prefixed to every
+chunk; tables are split by row-group with the header repeated; bullet/numbered lists are
+kept whole with their lead-in sentence; prose is token-budgeted (~550 tokens, `tiktoken`
+`cl100k_base`) with ~120-token sliding overlap. Each content type is chunked differently
+because one generic splitter scrambles tables and fragments list context.
+
+**Embedding model choice**
+`BAAI/bge-large-en-v1.5` (1024-dim), run locally via `fastembed` (ONNX, CPU). Chosen over
+the smaller default `all-MiniLM-L6-v2` for meaningfully better MTEB retrieval quality, at
+the cost of a larger one-time download (~1.2GB) and slower per-chunk CPU inference - both
+fully offline, no API key either way.
+
+**Vector database choice**
+ChromaDB, embedded/persistent mode (no separate server to run) - one **physically
+separate collection per organization**, which is also the strongest layer of tenant
+isolation (no shared index to leak across even if a filter is forgotten). Trade-off:
+doesn't scale as gracefully to thousands of orgs.
+
+**How organization isolation is enforced**
+Three independent layers: (1) API layer validates `org_id` on every request, (2) SQL
+layer filters every query `WHERE org_id = ...`, (3) vector layer uses a separate Chroma
+collection per org. No single layer's mistake can leak data across tenants. No auth
+yet - `org_id` is trusted from the request, not a verified identity (the biggest gap,
+flagged for production).
+
+**How hallucinations are prevented**
+Layered: retrieval grounding (model only sees retrieved chunks) -> similarity-confidence
+gate (skips the LLM entirely on weak matches) -> prompt-injection defense (retrieved text
+wrapped as inert data) -> structured JSON output validated against a Pydantic schema with
+bounded retries -> independent verification that every citation actually came from the
+retrieved set -> low temperature (0.1) -> model self-reports a review flag, combined with
+the independent confidence signal.
+
+**Path to production**
+In priority order: real auth (API keys/JWT scoped to org), a background job queue for
+ingestion (currently synchronous), Alembic migrations (currently `create_all()`),
+re-validating the similarity threshold for the current embedding model, hybrid
+search/re-ranking, classifying non-document questions before retrieval, observability
+(logs/tracing/metrics), rate limiting, a managed vector store for horizontal scale, and
+an automated test suite + CI/CD.
